@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 관리</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        fieldset {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        label {
+            display: inline-block;
+            width: 80px;
+            margin-bottom: 10px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 180px;
+            padding: 5px;
+        }
+        .loader {
+            display: none;
+        }
+        .main-page, form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-page">
+        <h1>메인 페이지</h1>
+        <p>아이디: <span id="userGreeting">사용자님</span> 안녕하세요!</p>
+        <button id="signupButton">회원가입</button>
+        <button id="loginButton">로그인</button>
+        <button id="deleteAccountButton">회원탈퇴</button>
+    </div>
+
+    <form id="login" style="display: none;">
+        <fieldset>
+            <legend>로그인</legend>
+            <div>
+                <label for="login_user_id">아이디</label>
+                <input type="text" name="login_user_id" id="login_user_id"/>
+            </div>
+            <div>
+                <label for="login_user_password">비밀번호</label>
+                <input type="password" name="login_user_password" id="login_user_password"/>
+                <div id="login_pwdDiv"></div>
+            </div>
+            <div>
+                <input type="submit" value="로그인"/>
+            </div>
+            <div class="loader"><img src="../image/loader.gif" alt="loader..."></div>
+        </fieldset>
+    </form>
+
+    <form id="signup" style="display: none;">
+        <fieldset>
+            <legend>회원가입</legend>
+            <div>
+                <label for="signup_user_id">아이디</label>
+                <input type="text" name="signup_user_id" id="signup_user_id"/>
+            </div>
+            <div>
+                <label for="signup_user_password">비밀번호</label>
+                <input type="password" name="signup_user_password" id="signup_user_password"/>
+                <div id="signup_pwdDiv"></div>
+            </div>
+            <div>
+                <input type="submit" value="회원가입"/>
+            </div>
+            <div class="loader"><img src="../image/loader.gif" alt="loader..."></div>
+        </fieldset>
+    </form>
+
+    <form id="delete_account" style="display: none;">
+        <fieldset>
+            <legend>회원탈퇴</legend>
+            <div>
+                <label for="delete_user_id">아이디</label>
+                <input type="text" name="delete_user_id" id="delete_user_id" readonly/>
+            </div>
+            <div>
+                <input type="submit" value="회원탈퇴"/>
+            </div>
+            <div class="loader"><img src="../image/loader.gif" alt="loader..."></div>
+        </fieldset>
+    </form>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript">
+    $(function(){
+        var loggedIn = false;
+        var registeredUserId = '';
+
+        // 버튼 클릭 이벤트 처리
+        $('#signupButton').on('click', function(){
+            $('#signup').show();
+            $('#login').hide();
+            $('#delete_account').hide();
+            $('.main-page').hide();
+        });
+
+        $('#loginButton').on('click', function(){
+            $('#login').show();
+            $('#signup').hide();
+            $('#delete_account').hide();
+            $('.main-page').hide();
+        });
+
+        $('#deleteAccountButton').on('click', function() {
+            if (loggedIn) {
+                $('#delete_account').show();
+                $('#login').hide();
+                $('#signup').hide();
+                $('.main-page').hide();
+            } else {
+                alert("로그인 후 이용 가능합니다.");
+            }
+        });
+
+        // 로그인 폼 처리
+        $('#login').bind('submit', function(e){
+            e.preventDefault();
+            var inputUserId = $('#login_user_id').val();
+            var inputUserPassword = $('#login_user_password').val();
+
+            $.ajax({
+                type: 'get',
+                url: '../json/json04.json',
+                dataType: 'json',
+                success: function(response) {
+                    var users = response.users;
+                    var validUser = users.find(function(user) {
+                        return user.user_id === inputUserId && user.user_password === inputUserPassword;
+                    });
+
+                    if (validUser) {
+                        alert('로그인 성공! 안녕하세요 ' + validUser.user_id + '님');
+                        loggedIn = true;
+                        $('#userGreeting').text(validUser.user_id);
+                        $('#delete_user_id').val(validUser.user_id);
+                        $('#login').hide();
+                        $('#delete_account').show();
+                        $('.main-page').show();
+                    } else {
+                        alert('아이디 또는 비밀번호가 잘못되었습니다.');
+                    }
+                },
+                error: function() {
+                    alert('로그인 중 오류가 발생했습니다.');
+                }
+            });
+        });
+
+        // 회원가입 폼 처리
+        $('#signup').bind('submit', function(e){
+            e.preventDefault();
+            // 회원가입 요청은 서버와의 연동에 따라 다릅니다.
+            // 아래는 예시이며, 실제로는 서버와 연동하여 회원가입을 처리합니다.
+            alert('회원가입 요청을 처리합니다.');
+            $('#signup').hide();
+            $('#login').show();
+        });
+
+        // 회원탈퇴 폼 처리
+        $('#delete_account').bind('submit', function(e){
+            e.preventDefault();
+            if (!loggedIn) {
+                alert('로그인 후에만 회원탈퇴를 할 수 있습니다.');
+                return false;
+            }
+
+            if (confirm('정말로 회원탈퇴를 하시겠습니까?')) {
+                // 회원탈퇴 요청은 서버와의 연동에 따라 다릅니다.
+                // 아래는 예시이며, 실제로는 서버와 연동하여 회원탈퇴를 처리합니다.
+                alert('회원탈퇴 요청을 처리합니다.');
+                loggedIn = false;
+                $('#delete_account').hide();
+                $('#login_user_id').val('');
+                $('#login_user_password').val('');
+                $('#login').show();
+                $('#userGreeting').text('사용자님');
+                $('.main-page').show();
+            }
+        });
+        
+        function deleteUserAccount(userId) {
+            // 1. 데이터베이스에서 사용자 상태를 'deleted'로 업데이트
+            db.updateUserStatus(userId, 'deleted');
+            
+            // 2. 사용자의 세션을 무효화
+            session.invalidate();
+            
+            // 3. JWT를 사용한다면 해당 토큰을 블랙리스트에 추가하거나 만료 처리
+            jwtBlacklist.add(userToken);
+        }
+
+   
+        
+    });
+    </script>
+</body>
+</html>

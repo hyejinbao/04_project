@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../css/common.css">
+<link rel="stylesheet" href="../css/reset.css">
+</head>
+<body>
+<h1 class="title">$.ajax()함수를사용한 json 데이터 읽기2</h1>
+	<div class="exec">
+		<input type="button" value="json데이터 가져오기2" id="mybtn" />
+	</div>
+	<div class="console" id="result"></div>
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript">
+$(function() {
+	$('#mybtn').click(function() {
+		$.ajax({ 
+			type: 'get',
+			url: '../json/json02.json',
+			dataType: 'json', //서버로부터 반환되는 데이터 타입
+			dataType: 'json',
+			success: function(data){
+				console.log(JSON.stringify(data));
+				 
+				console.log(data.school.subject);
+				//let title = data.school.subject.title;
+				//let time = data.school.subject.time;
+				console.log(data.school.subject[0].teacher);
+			//	let teacher= data.school.subject[0].teacher;
+				
+				let subject = data.school.subject;
+				for(let i=0; i<subject.length; i++){
+					let  div = `<div>` +
+					            `<p>${data.school.subject[i].title}</p>` +
+					            `<p>` + data.school.subject[i].time +` </p>` +
+					            `<p>` + data.school.subject[i].teacher +` </p>`
+				
+								`</div>`;
+					        	$('#result').append(div).append('<br/>');
+				}
+			
+			},	
+			error: function(e){
+			console.log(e);
+			}
+					            });	
+					       
+					        });
+					        });
+</script>
+</body>
+</html>
+ 
+ 

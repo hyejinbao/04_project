@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../css/common.css">
+<link rel="stylesheet" href="../css/reset.css">
+</head>
+<body>
+	<h1 class="title">$.ajax()함수 사용한텍스트</h1>
+	<div class="exec">
+		<input type="button" value="txt 파일가져오기" id="mybtn" />
+
+	</div>
+	<div class="console" id="result"></div>
+
+
+</body>
+
+<script type="text/javascript"
+	src="http://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript">
+	$(function() {
+		$('#mybtn')
+				.click(
+						function() {
+							jQuery
+									.ajax({
+										type : 'get',
+										url : 'http://localhost:8080/jQueryAjax/txt/text01.txt',//서버요청
+										dataType: 'text',
+										success : function(data) {
+										$('#result').text(data);
+										},
+										// 200,404, 405 405get post 잘못들어옴 500 서버에러(프로그램 잘못짬)
+										error : function(xhr, textStatus,
+												errorThrown) {
+											$('div').html(
+													'<div>' + textStatus
+															+ '(HTTP-'
+															+ xhr.status + '/'
+															+ errorThrown + ')'
+															+ '</div>');
+										}
+									});
+						});
+	});
+</script>
+</body>
+</html>

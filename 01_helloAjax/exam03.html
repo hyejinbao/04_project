@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../css/common.css">
+<link rel="stylesheet" href="../css/reset.css">
+</head>
+<body>
+	<h1 class="title">$.ajax() jsp 데이터 주고받기</h1>
+	<div class="exec">
+		<input type="button" value="jsp 가져오기" id="mybtn" />
+
+	</div>
+	<div class="console" id="result"></div>
+
+
+	<script type="text/javascript"
+		src="http://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			$('#mybtn').click(function(
+					) {
+				$.ajax({
+					type : 'get',
+					url : '../txt/textdata.jsp',
+					//data: 'keyword=Hello Ajax!!',
+					//data : '변수=값&변수=값',//서버로 보내는 데이터
+					data : {
+						'keyword' : 'Hello Ajax!! Pubao PANDAZIA'
+					}, //JSON
+					dataType : 'text',
+					success : function(data) {
+						$('#result').html(data);
+					},
+					error : function(e) {
+						console.log(e);
+					}
+				});
+
+			});
+		});
+	</script>
+</body>
+</html>
